@@ -5,50 +5,112 @@ import { onMounted, reactive } from "vue";
 const col = 7
 const row = 7
 const bombs = 10
-let grid = reactive([])
+const grid = []
+let sgrid = reactive([])
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
+
 function  plantBomb() {
     const colb = getRandomInt(col+1)
     const rowb = getRandomInt(row+1)
-    if(grid[colb][rowb]){
+    if(grid[colb][rowb] === 'b'){
         plantBomb()
     }else{
-        grid[colb][rowb] = true
+        grid[colb][rowb] = 'b'
     }
 }
+
 function spreadBomb() {
     for(let i = 1;i <= bombs; i++){
         plantBomb()
     }
 }
-function createGrid() {
+
+function createGrid(array, value) {
     for (let i = 0; i <= col; i++) {
-        grid[i] = []
+        array[i] = []
         for (let j = 0; j <= row; j++) {
-            grid[i][j] = false
+            array[i][j] = value
         }
     }
-    spreadBomb()
 }
-function changeGrid(x, y) {
-    grid[x][y] = !grid[x][y]
+
+function gameRules(x, y) {
+    if(grid[x][y] === 'b'){
+        for (let i = 0; i <= col; i++) {
+            for (let j = 0; j <= row; j++) {
+                if(grid[i][j] === 'b'){
+                    sgrid[i][j] = 'b'
+                }
+            }
+        }
+        sgrid[x][y] = 'bh'
+    }else if(grid[x][y] === '0'){
+        sgrid[x][y] = grid[x][y]
+        floodfill(x, y)
+    }else{
+        sgrid[x][y] = grid[x][y]
+    }
+}    
+
+function floodfill(x, y) {
+    for(let k = -1; k <= 1; k++){
+        for(let j = -1; j <= 1; j++){
+            let x_pixel = x + k
+            let y_pixel = y + j
+            if(x_pixel > -1 && x_pixel <= col && y_pixel > -1 && y_pixel <= row){
+                if(grid[x_pixel][y_pixel] !== 'b' && sgrid[x_pixel][y_pixel] === 'n'){
+                    gameRules(x_pixel, y_pixel)
+                }
+            }
+        }
+    }
+}
+
+function lookForBombs() {
+    let bomb = 0
+    for (let i = 0; i <= col; i++) {
+        for (let j = 0; j <= row; j++) {
+            if(grid[i][j] === 'b') {
+                continue
+            }
+            bomb = 0
+            for(let k = -1; k <= 1; k++){
+                for(let y = -1; y <= 1; y++){
+                    if(k === 0 && y === 0){
+                         continue;
+                    }
+                    let x_pixel = i + k
+                    let y_pixel = j + y
+                    if(x_pixel > -1 && x_pixel <= col && y_pixel > -1 && y_pixel <= row){
+                        if(grid[i+k][j+y] === 'b') {
+                            bomb++
+                        }
+                    }
+                }
+            }
+        grid[i][j] = bomb.toString()
+        }
+        
+    }
 }
 
 onMounted(() => {
-   createGrid()
+    createGrid(sgrid, 'n')
+    createGrid(grid, '0')
+    spreadBomb()
+    lookForBombs()
 })
-
 
 </script>
 
 <template> 
     <div :style="{ 'grid-template-columns': 'repeat( '+(col+1)+', minmax(0, 1fr))'}" class="grid w-fit">
-        <div v-for="(column, x_index) in grid" :key="x_index" class="grid w-fit">
+        <div v-for="(column, x_index) in sgrid" :key="x_index" class="grid w-fit">
             <div v-for="(state, y_index) in column" :key="y_index" class="grid w-fit">
-                <Tile @showTile="changeGrid" :state="state" :x="x_index" :y="y_index"/>
+                <Tile @showTile="gameRules" :tile="state" :x="x_index" :y="y_index"/>
             </div>
         </div>
     </div>

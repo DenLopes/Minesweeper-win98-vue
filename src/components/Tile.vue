@@ -1,17 +1,51 @@
 <script setup>
 const props = defineProps({
-        state: Boolean,
+        tile: String,
         x: Number,
         y: Number,
     })
 
 
 function applyTileImg() {
-    if(props.state) {
-        return new URL(`../assets/img/bomb.png`, import.meta.url)
-    }else {
-        return new URL(`../assets/img/natural.png`, import.meta.url)
+    switch(props.tile){
+        case 'n':
+            return new URL(`../assets/img/natural.png`, import.meta.url)
+            break
+        case 'bh':
+            return new URL(`../assets/img/bomb-hit.png`, import.meta.url)
+            break
+        case 'b':
+            return new URL(`../assets/img/bomb.png`, import.meta.url)
+            break
+        case '0':
+            return new URL(`../assets/img/0.png`, import.meta.url)
+            break
+        case '1':
+            return new URL(`../assets/img/1.png`, import.meta.url)
+            break
+        case '2':
+            return new URL(`../assets/img/2.png`, import.meta.url)
+            break
+        case '3':
+            return new URL(`../assets/img/3.png`, import.meta.url)
+            break
+        case '4':
+            return new URL(`../assets/img/4.png`, import.meta.url)
+            break
+        case '5':
+            return new URL(`../assets/img/5.png`, import.meta.url)
+            break
+        case '6':
+            return new URL(`../assets/img/6.png`, import.meta.url)
+            break
+        case '7':
+            return new URL(`../assets/img/7.png`, import.meta.url)
+            break
+        case '8':
+            return new URL(`../assets/img/8.png`, import.meta.url)
+            break
     }
+    
 }
 
 
