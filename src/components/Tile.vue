@@ -11,11 +11,17 @@ function applyTileImg() {
         case 'n':
             return new URL(`../assets/img/natural.png`, import.meta.url)
             break
+        case 'f':
+            return new URL(`../assets/img/flag.png`, import.meta.url)
+            break
         case 'bh':
             return new URL(`../assets/img/bomb-hit.png`, import.meta.url)
             break
         case 'b':
             return new URL(`../assets/img/bomb.png`, import.meta.url)
+            break
+         case 'x':
+            return new URL(`../assets/img/X.png`, import.meta.url)
             break
         case '0':
             return new URL(`../assets/img/0.png`, import.meta.url)
@@ -45,14 +51,11 @@ function applyTileImg() {
             return new URL(`../assets/img/8.png`, import.meta.url)
             break
     }
-    
 }
-
-
 </script>
 
 <template>
-    <button @click="$emit('showTile', x, y)" class="w-4 h-4 bg-black" >
+    <button @click="$emit('showTile', x, y)" @contextmenu.prevent="$emit('flag', x, y)" class="w-4 h-4 bg-black" >
         <img :src="applyTileImg()" alt="tile">
     </button>
 </template>

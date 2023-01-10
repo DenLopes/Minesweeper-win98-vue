@@ -1,5 +1,85 @@
 <script setup>
+import { onMounted, reactive, ref } from 'vue';
 import Grid from './components/Grid.vue';
+
+
+
+let ldArray = reactive([])
+let rdArray = reactive([])
+let bArray = []
+let tArray = []
+let time = 0
+const interval = setInterval(() => updateTime(), 1000)
+const bombs = 10
+const col = 7
+const row = 7
+
+function numberToArray(number) {
+	let array = []
+	number = number.toString()
+	array = number.split('')
+	if(array.length < 2){
+		array.unshift('0', '0')
+	}else if(array.length < 3){
+		array.unshift('0')
+	}
+	return array
+}
+
+function createDisplayUrlArray(number ,array, sarray) {
+	array = numberToArray(number)
+	if(array.length > 3){
+		for(let i = 0;i < array.length; i++){
+			srray[i] = `src/assets/img/9-info.png`
+		}
+	}else{
+		for(let i = 0;i < array.length; i++){
+			switch(array[i]){
+				case '0':
+            	sarray[i] = `src/assets/img/0-info.png`
+            	break
+				case '1':
+            	sarray[i] = `src/assets/img/1-info.png`
+            	break
+				case '2':
+            	sarray[i] = `src/assets/img/2-info.png`
+            	break
+				case '3':
+            	sarray[i] = `src/assets/img/3-info.png`
+            	break
+				case '4':
+            	sarray[i] = `src/assets/img/4-info.png`
+            	break
+				case '5':
+            	sarray[i] = `src/assets/img/5-info.png`
+            	break
+				case '6':
+            	sarray[i] = `src/assets/img/6-info.png`
+            	break
+				case '7':
+            	sarray[i] = `src/assets/img/7-info.png`
+            	break
+				case '8':
+            	sarray[i] = `src/assets/img/8-info.png`
+            	break
+				case '9':
+            	sarray[i] = `src/assets/img/9-info.png`
+            	break
+			}
+		}
+	}
+}
+
+function updateTime(){
+	time++
+	createDisplayUrlArray(time, tArray, rdArray)
+}
+
+onMounted(() =>{
+	createDisplayUrlArray(bombs, bArray, ldArray)
+	interval
+})
+
 </script>
 
 <template>
@@ -38,10 +118,14 @@ import Grid from './components/Grid.vue';
 								</div>
 								<div id="middle" class="flex">
 									<div id="right" class="w-0.5 h-full bg-dark-gray-win"></div>
-									<div id="display" class="flex justify-around w-full">
-										<div id="left-diplay" class="w-[41px] h-[25px] bg-display my-1"></div>
+									<div id="display" class="flex justify-between w-full">
+										<div id="left-diplay" class="flex w-[41px] h-[25px] bg-display my-1 ml-1.5 p-px">
+											<img :src="image" v-for="image in ldArray" class="w-[13px] h-[23px]">
+										</div>
 										<button><img src="src/assets/img/happy-face.png" alt="face-button" class="mt-px"></button>
-										<div id="left-right" class="w-[41px] h-[25px] bg-display my-1"></div>
+										<div id="left-right" class="flex w-[41px] h-[25px] bg-display my-1 mr-1.5 p-px">
+											<img :src="image" v-for="image in rdArray" class="w-[13px] h-[23px]">
+										</div>
 									</div>
 									<div id="left" class="w-0.5 h-full bg-white"></div>
 								</div>
@@ -55,7 +139,7 @@ import Grid from './components/Grid.vue';
 								</div>
 								<div id="middle" class="flex">
 									<div id="right" class="w-[3px] h-full bg-dark-gray-win"></div>
-									<Grid></Grid>
+									<Grid :bombs="bombs" :col="col" :row="row"></Grid>
 									<div id="left" class="w-[3px] h-full bg-white"></div>
 								</div>
 								<div id="bottom" class="w-full h-[3px] bg-white">
