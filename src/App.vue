@@ -261,5 +261,6 @@ onMounted(() =>{
 <style scoped>
 div, img {
   image-rendering: pixelated;
+  user-select: none;
 }
 </style>
