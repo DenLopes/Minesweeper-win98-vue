@@ -12,6 +12,8 @@ let time = 0
 const bombs = 10
 const col = 7
 const row = 7
+const gridKey = ref(0)
+const fromChild = ref()
 let interval 
 let bomb_count = bombs
 
@@ -92,6 +94,16 @@ function listenOutflag() {
 	createDisplayUrlArray(bomb_count, bArray, ldArray)
 }
 
+function reloadGrid() {
+	time = 0
+	bomb_count = bombs
+	gridKey.value++
+	fromChild.value.gameInit()
+	listenPause()
+	createDisplayUrlArray(bombs, bArray, ldArray)
+	createDisplayUrlArray(time, tArray, rdArray)
+}
+
 onMounted(() =>{
 	createDisplayUrlArray(bombs, bArray, ldArray)
 	createDisplayUrlArray(time, tArray, rdArray)
@@ -139,7 +151,7 @@ onMounted(() =>{
 										<div id="left-diplay" class="flex w-[41px] h-[25px] bg-display my-1 ml-1.5 p-px">
 											<img :src="image" v-for="image in ldArray" class="w-[13px] h-[23px]">
 										</div>
-										<button><img src="src/assets/img/happy-face.png" alt="face-button" class="mt-px"></button>
+										<button @click="reloadGrid()" ><img src="src/assets/img/happy-face.png" alt="face-button" class="mt-px"></button>
 										<div id="left-right" class="flex w-[41px] h-[25px] bg-display my-1 mr-1.5 p-px">
 											<img :src="image" v-for="image in rdArray" class="w-[13px] h-[23px]">
 										</div>
@@ -160,12 +172,15 @@ onMounted(() =>{
 									:bombs="bombs" 
 									:bomb_count="bomb_count"
 									:col="col" 
-									:row="row" 
+									:row="row"
+									:key="gridKey"
+									ref="fromChild" 
 									@play.once="listenPlay" 
 									@pause.once="listenPause" 
 									@flaged="listenInflag" 
 									@unflaged="listenOutflag"
 									@win=""
+									@gameInit="reloadGrid"
 									></Grid>
 									<div id="left" class="w-[3px] h-full bg-white"></div>
 								</div>

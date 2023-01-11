@@ -148,7 +148,7 @@ function checkIfWon() {
         emit('pause')
         for (let i = 0; i <= col; i++) {
             for (let j = 0; j <= row; j++) {
-                if(sgrid[i][j] === 'n'){
+                if(sgrid[i][j] === 'n' && grid[i][j] === 'b'){
                     sgrid[i][j] = 'f'
                 }
             }
@@ -164,6 +164,10 @@ function gameInit() {
     spreadBomb()
     lookForBombs()
 }
+
+defineExpose({
+    gameInit,
+})
 
 onMounted(() => {
     gameInit()
