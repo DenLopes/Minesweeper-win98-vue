@@ -91,6 +91,7 @@ function listenOutflag() {
 	bomb_count++
 	createDisplayUrlArray(bomb_count, bArray, ldArray)
 }
+
 onMounted(() =>{
 	createDisplayUrlArray(bombs, bArray, ldArray)
 	createDisplayUrlArray(time, tArray, rdArray)
@@ -164,6 +165,7 @@ onMounted(() =>{
 									@pause.once="listenPause" 
 									@flaged="listenInflag" 
 									@unflaged="listenOutflag"
+									@win=""
 									></Grid>
 									<div id="left" class="w-[3px] h-full bg-white"></div>
 								</div>

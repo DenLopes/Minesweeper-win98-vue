@@ -9,7 +9,7 @@ const props = defineProps({
     row: Number,
 })
 
-const emit = defineEmits(['play', 'pause', 'flaged', 'unflaged'])
+const emit = defineEmits(['play', 'pause', 'flaged', 'unflaged', 'win'])
 
 const col = props.col
 const row = props.row
@@ -78,7 +78,7 @@ function lookForBombs() {
 
 function gameRules(x, y) {
     emit('play')
-    if(!game_stop){
+    if(game_stop === false){
         if(grid[x][y] === 'b'){
             for (let i = 0; i <= col; i++) {
                 for (let j = 0; j <= row; j++) {
@@ -91,14 +91,19 @@ function gameRules(x, y) {
             }
             sgrid[x][y] = 'bh'
             emit('pause')
-            game_stop = !game_stop
+            game_stop = true
         }else if(grid[x][y] === '0'){
             sgrid[x][y] = grid[x][y]
             floodfill(x, y)
+        }else if(sgrid[x][y] === 'f'){
+            bomb_count++
+            emit('unflaged')
+            sgrid[x][y] = grid[x][y]
         }else{
             sgrid[x][y] = grid[x][y]
         }
-   }
+        checkIfWon()
+    }
 }    
 
 function floodfill(x, y) {
@@ -128,8 +133,32 @@ function flag(x ,y) {
     }
 }
 
+function checkIfWon() {
+    let aux = 0
+    for (let i = 0; i <= col; i++) {
+        for (let j = 0; j <= row; j++) {
+            if(sgrid[i][j] === 'n' || sgrid[i][j] === 'f'){
+                aux++
+            }
+        }
+    }
+    if(aux === bombs){
+        game_stop = true
+        emit('win')
+        emit('pause')
+        for (let i = 0; i <= col; i++) {
+            for (let j = 0; j <= row; j++) {
+                if(sgrid[i][j] === 'n'){
+                    sgrid[i][j] = 'f'
+                }
+            }
+        }
+    }
+}
+
 function gameInit() {
     game_stop = false
+    bomb_count = bombs
     createGrid(sgrid, 'n')
     createGrid(grid, '0')
     spreadBomb()
