@@ -92,6 +92,7 @@ function gameRules(x, y) {
             emit('lose')
             emit('pause')
             game_stop = true
+            return
         }else if(grid[x][y] === '0'){
             sgrid[x][y] = grid[x][y]
             floodfill(x, y)
