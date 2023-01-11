@@ -137,7 +137,7 @@ function checkIfWon() {
     let aux = 0
     for (let i = 0; i <= col; i++) {
         for (let j = 0; j <= row; j++) {
-            if(sgrid[i][j] === 'n' || sgrid[i][j] === 'f'){
+            if(sgrid[i][j] === 'n' || sgrid[i][j] === 'f' && grid[i][j] === 'b'){
                 aux++
             }
         }
