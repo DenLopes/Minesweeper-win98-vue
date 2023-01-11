@@ -1,17 +1,21 @@
 <script setup>
 import Tile from "../components/Tile.vue"
-import { onMounted, reactive } from "vue";
+import { onMounted, reactive, defineEmits } from "vue";
 
 const props = defineProps({
     bombs: Number,
+    bomb_count: Number,
     col: Number,
     row: Number,
 })
+
+const emit = defineEmits(['play', 'pause', 'flaged', 'unflaged'])
 
 const col = props.col
 const row = props.row
 const bombs = props.bombs
 let game_stop = false
+let bomb_count = bombs
 const grid = []
 let sgrid = reactive([])
 
@@ -73,7 +77,8 @@ function lookForBombs() {
 }
 
 function gameRules(x, y) {
-   if(!game_stop){
+    emit('play')
+    if(!game_stop){
         if(grid[x][y] === 'b'){
             for (let i = 0; i <= col; i++) {
                 for (let j = 0; j <= row; j++) {
@@ -85,6 +90,7 @@ function gameRules(x, y) {
                 }
             }
             sgrid[x][y] = 'bh'
+            emit('pause')
             game_stop = !game_stop
         }else if(grid[x][y] === '0'){
             sgrid[x][y] = grid[x][y]
@@ -110,8 +116,15 @@ function floodfill(x, y) {
 }
 
 function flag(x ,y) {
-    if(sgrid[x][y] === 'n' && !game_stop){
+    emit('play')
+    if(sgrid[x][y] === 'n' && !game_stop && bomb_count > 0){
+        bomb_count--
         sgrid[x][y] = 'f'
+        emit('flaged')
+    }else if(sgrid[x][y] === 'f' && !game_stop){
+        bomb_count++
+        sgrid[x][y] = 'n'
+        emit('unflaged')
     }
 }
 

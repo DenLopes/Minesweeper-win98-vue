@@ -9,10 +9,11 @@ let rdArray = reactive([])
 let bArray = []
 let tArray = []
 let time = 0
-const interval = setInterval(() => updateTime(), 1000)
 const bombs = 10
 const col = 7
 const row = 7
+let interval 
+let bomb_count = bombs
 
 function numberToArray(number) {
 	let array = []
@@ -74,10 +75,25 @@ function updateTime(){
 	time++
 	createDisplayUrlArray(time, tArray, rdArray)
 }
+function listenPlay() {
+	updateTime()
+	return interval = setInterval(() => updateTime(), 1000)
+}
+function listenPause() {
+	return clearInterval(interval)
+}
 
+function listenInflag() {
+	bomb_count--
+	createDisplayUrlArray(bomb_count, bArray, ldArray)
+}
+function listenOutflag() {
+	bomb_count++
+	createDisplayUrlArray(bomb_count, bArray, ldArray)
+}
 onMounted(() =>{
 	createDisplayUrlArray(bombs, bArray, ldArray)
-	interval
+	createDisplayUrlArray(time, tArray, rdArray)
 })
 
 </script>
@@ -139,7 +155,16 @@ onMounted(() =>{
 								</div>
 								<div id="middle" class="flex">
 									<div id="right" class="w-[3px] h-full bg-dark-gray-win"></div>
-									<Grid :bombs="bombs" :col="col" :row="row"></Grid>
+									<Grid 
+									:bombs="bombs" 
+									:bomb_count="bomb_count"
+									:col="col" 
+									:row="row" 
+									@play.once="listenPlay" 
+									@pause.once="listenPause" 
+									@flaged="listenInflag" 
+									@unflaged="listenOutflag"
+									></Grid>
 									<div id="left" class="w-[3px] h-full bg-white"></div>
 								</div>
 								<div id="bottom" class="w-full h-[3px] bg-white">
