@@ -4,9 +4,9 @@
 
 @font-face {
     font-family: "Retro-win-bold";
-    src: url("assets/font/MS-Sans-Serif-Bold.ttf") format('truetype');
+    src: url("../src/assets/font/MS-Sans-Serif-Bold.ttf") format('truetype');
 }
 @font-face {
     font-family: "Retro-win";
-    src: url("assets/font/MS-Sans-Serif.ttf") format('truetype');
+    src: url("../src/assets/font/MS-Sans-Serif.ttf") format('truetype');
 }

@@ -1,6 +1,6 @@
 <script setup>
 import Tile from "../components/Tile.vue"
-import { onMounted, reactive, defineEmits } from "vue";
+import { onMounted, reactive } from "vue";
 
 const props = defineProps({
     bombs: Number,
