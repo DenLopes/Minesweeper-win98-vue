@@ -55,7 +55,7 @@ function applyTileImg() {
 </script>
 
 <template>
-    <button @click="$emit('showTile', x, y)" @contextmenu.prevent="$emit('flag', x, y)" class="w-4 h-4 bg-black" >
+    <button @click="$emit('showTile', x, y)" @contextmenu.prevent="$emit('flag', x, y)" @press="$emit('flag', x, y)" class="w-4 h-4 bg-black" >
         <img :src="applyTileImg()" alt="tile">
     </button>
 </template>

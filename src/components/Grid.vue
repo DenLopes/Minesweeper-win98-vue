@@ -4,12 +4,11 @@ import { onMounted, reactive, defineEmits } from "vue";
 
 const props = defineProps({
     bombs: Number,
-    bomb_count: Number,
     col: Number,
     row: Number,
 })
 
-const emit = defineEmits(['play', 'pause', 'flaged', 'unflaged', 'win'])
+const emit = defineEmits(['play', 'pause', 'flaged', 'unflaged', 'win', 'lose'])
 
 const col = props.col
 const row = props.row
@@ -90,6 +89,7 @@ function gameRules(x, y) {
                 }
             }
             sgrid[x][y] = 'bh'
+            emit('lose')
             emit('pause')
             game_stop = true
         }else if(grid[x][y] === '0'){

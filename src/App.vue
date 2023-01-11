@@ -14,6 +14,8 @@ const col = 7
 const row = 7
 const gridKey = ref(0)
 const fromChild = ref()
+const faceState = ref('')
+let gameStop = false
 let interval 
 let bomb_count = bombs
 
@@ -73,6 +75,50 @@ function createDisplayUrlArray(number ,array, sarray) {
 	}
 }
 
+function gameWon() {
+	faceState.value = "won"
+	gameStop = true
+}
+
+function gameLost() {
+	faceState.value = 'lost'
+	gameStop = true
+}
+
+function mouseDown() {
+	if(gameStop === false){
+		faceState.value = 'o-o'
+	}
+}
+
+function mouseUp() {
+	if(gameStop === false){
+		faceState.value = ''
+	}
+}
+
+function faceClick() {
+	faceState.value = 'click'
+}
+
+function faceUnClick() {
+	faceState.value = ''
+}
+
+function changeFace() {
+	if(faceState.value === 'won'){
+		return 'src/assets/img/chill-face.png'
+	}else if(faceState.value === 'lost'){
+		return 'src/assets/img/dead-face.png'
+	}else if(faceState.value === 'o-o'){
+		return 'src/assets/img/o-o-face.png'
+	}else if(faceState.value === 'click'){
+		return 'src/assets/img/happy-face-clicked.png'		
+	}else{
+		return 'src/assets/img/happy-face.png'
+	}
+}
+
 function updateTime(){
 	time++
 	createDisplayUrlArray(time, tArray, rdArray)
@@ -95,6 +141,8 @@ function listenOutflag() {
 }
 
 function reloadGrid() {
+	faceState.value = ''
+	gameStop = false
 	time = 0
 	bomb_count = bombs
 	gridKey.value++
@@ -151,7 +199,13 @@ onMounted(() =>{
 										<div id="left-diplay" class="flex w-[41px] h-[25px] bg-display my-1 ml-1.5 p-px">
 											<img :src="image" v-for="image in ldArray" class="w-[13px] h-[23px]">
 										</div>
-										<button @click="reloadGrid()" ><img src="src/assets/img/happy-face.png" alt="face-button" class="mt-px"></button>
+										<button @click="reloadGrid()" >
+											<img :src="changeFace()" 
+											@mousedown.left="faceClick()" 
+											@mouseup.left="faceUnClick()" 
+											@touchstart="faceClick()"
+											@touchend="faceUnClick()" alt="face-button" class="mt-px">
+										</button>
 										<div id="left-right" class="flex w-[41px] h-[25px] bg-display my-1 mr-1.5 p-px">
 											<img :src="image" v-for="image in rdArray" class="w-[13px] h-[23px]">
 										</div>
@@ -170,7 +224,6 @@ onMounted(() =>{
 									<div id="right" class="w-[3px] h-full bg-dark-gray-win"></div>
 									<Grid 
 									:bombs="bombs" 
-									:bomb_count="bomb_count"
 									:col="col" 
 									:row="row"
 									:key="gridKey"
@@ -179,8 +232,13 @@ onMounted(() =>{
 									@pause.once="listenPause" 
 									@flaged="listenInflag" 
 									@unflaged="listenOutflag"
-									@win=""
+									@win="gameWon"
+									@lose="gameLost"
 									@gameInit="reloadGrid"
+									@mousedown.left="mouseDown"
+									@mouseup.left="mouseUp"
+									@touchstart="mouseDown"
+									@touchend="mouseUp"
 									></Grid>
 									<div id="left" class="w-[3px] h-full bg-white"></div>
 								</div>
