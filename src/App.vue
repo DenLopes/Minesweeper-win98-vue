@@ -202,7 +202,8 @@ onMounted(() =>{
 											<img :src="image" v-for="image in ldArray" class="w-[13px] h-[23px]">
 										</div>
 										<button @click="reloadGrid()" >
-											<img :src="changeFace()" 
+											<img 
+											:src="changeFace()" 
 											@mousedown.left="faceClick()" 
 											@mouseup.left="faceUnClick()" 
 											@touchstart="faceClick()"
