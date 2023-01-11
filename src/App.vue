@@ -78,6 +78,8 @@ function createDisplayUrlArray(number ,array, sarray) {
 function gameWon() {
 	faceState.value = "won"
 	gameStop = true
+	bomb_count = 0
+	createDisplayUrlArray(bombs, bArray, ldArray)
 }
 
 function gameLost() {
