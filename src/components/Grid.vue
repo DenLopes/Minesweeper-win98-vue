@@ -1,5 +1,5 @@
 <script setup>
-import Tile from "../components/Tile.vue"
+import Tile from "../components/Tile.vue";
 import { onMounted, reactive } from "vue";
 
 const props = defineProps({
@@ -93,19 +93,20 @@ function gameRules(x, y) {
             emit('pause')
             game_stop = true
             return
-        }else if(grid[x][y] === '0'){
+        }else if(grid[x][y] === '0' && sgrid[x][y] !== 'f'){
             sgrid[x][y] = grid[x][y]
             floodfill(x, y)
         }else if(sgrid[x][y] === 'f'){
             bomb_count++
             emit('unflaged')
             sgrid[x][y] = grid[x][y]
+            gameRules(x, y)
         }else{
             sgrid[x][y] = grid[x][y]
         }
         checkIfWon()
     }
-}    
+}
 
 function floodfill(x, y) {
     for(let k = -1; k <= 1; k++){
@@ -138,7 +139,7 @@ function checkIfWon() {
     let aux = 0
     for (let i = 0; i <= col; i++) {
         for (let j = 0; j <= row; j++) {
-            if(sgrid[i][j] === 'n' || sgrid[i][j] === 'f' && game_stop === false){
+            if(sgrid[i][j] === 'n' || sgrid[i][j] === 'f'){
                 aux++
             }
         }

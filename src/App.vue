@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import Grid from './components/Grid.vue';
+import Menu from './components/Menu.vue';
 
 
 
@@ -9,12 +10,13 @@ let rdArray = reactive([])
 let bArray = []
 let tArray = []
 let time = 0
-const bombs = 10
-const col = 7
-const row = 7
+let bombs = 10
+let col = 7
+let row = 7
 const gridKey = ref(0)
 const fromChild = ref()
 const faceState = ref('')
+const active = ref(false)
 let gameStop = false
 let interval 
 let bomb_count = bombs
@@ -108,15 +110,20 @@ function faceUnClick() {
 }
 
 function changeFace() {
-	if(faceState.value === 'won'){
+	switch(faceState.value){
+		case 'won':
 		return new URL ('../src/assets/img/chill-face.png', import.meta.url)
-	}else if(faceState.value === 'lost'){
+		break
+		case 'lost':
 		return new URL ('../src/assets/img/dead-face.png', import.meta.url)
-	}else if(faceState.value === 'o-o'){
+		break
+		case 'o-o':
 		return new URL ('../src/assets/img/o-o-face.png', import.meta.url)
-	}else if(faceState.value === 'click'){
-		return new URL ('../src/assets/img/happy-face-clicked.png', import.meta.url)		
-	}else{
+		break
+		case 'click':
+		return new URL ('../src/assets/img/happy-face-clicked.png', import.meta.url)
+		break		
+		default:
 		return new URL ('../src/assets/img/happy-face.png', import.meta.url)
 	}
 }
@@ -142,6 +149,33 @@ function listenOutflag() {
 	createDisplayUrlArray(bomb_count, bArray, ldArray)
 }
 
+function toggleMenu() {
+	active.value = !active.value
+}
+
+function difficulty(dif) {
+	switch(dif){
+		case 'hard':
+			col = 23
+			row = 23
+			bombs = 99
+			reloadGrid()
+			break
+		case 'inter':
+			col = 15
+			row = 15
+			bombs = 40
+			reloadGrid()
+			break
+		default:
+			col = 7
+			row = 7
+			bombs = 10
+			reloadGrid()
+	}
+
+}
+
 function reloadGrid() {
 	faceState.value = ''
 	gameStop = false
@@ -154,7 +188,7 @@ function reloadGrid() {
 	createDisplayUrlArray(time, tArray, rdArray)
 }
 
-onMounted(() =>{
+onMounted(() => {
 	createDisplayUrlArray(bombs, bArray, ldArray)
 	createDisplayUrlArray(time, tArray, rdArray)
 })
@@ -180,9 +214,16 @@ onMounted(() =>{
 						<button><img src="../src/assets/img/close.png" alt="close-icon" class="w-4 h-3.5 ml-0.5"></button>
 					</div>
 				</div>
-				<div id="win-buttons" class="flex mb-px">
-					<button class="text-xs font-retro first-letter:underline ml-2">Game</button>
-					<button class="text-xs font-retro first-letter:underline ml-3">Help</button>
+				<div id="win-buttons" class="relative flex mb-px">
+					<button @click.stop="toggleMenu()" class="text-xs font-retro first-letter:underline ml-0.5 px-1.5 mt-0.5" :class="active ? 'shadow-in': ''">Game</button>
+					<Menu 
+					@click.stop="toggleMenu()"
+					@newgame="reloadGrid()"
+					@dif="difficulty" 
+					v-show="active" 
+					class="absolute top-[21px] left-0.5">
+					</Menu>
+					<button class="text-xs font-retro first-letter:underline px-1.5">Help</button>
 				</div>
 				<div id="game-window" class="flex flex-col w-fit h-fit self-center">
 					<div id="top" class="flex w-full h-[3px] bg-white justify-end">

@@ -6,10 +6,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      width: {
+        '37': '147px',
+        '54.5': '217px'
+      },
+      height: {
+        '37': '148px',
+        '54.5': '218px'
+      },
       scale: {
         '175': '1.75',
       },
       boxShadow: {
+        'in': '-1px -1px #818181, -1px 0 #818181, 0 -1px #818181, 1px 1px white, 0 1px white, 1px 0 white,  1px -1px white, -1px 1px white',
         'window': '-1px -1px white, -1px 0 white, 0 -1px white, -2px -2px #c3c3c3, -2px 0 #c3c3c3, 0 -2px #c3c3c3, 1px 1px #818181, 0 1px #818181, 1px 0 #818181,  1px -1px #818181, -1px 1px #818181, -2px 1px #c3c3c3, -2px 2px black, 2px 2px black, 2px 0 black, 0 2px black, 1px -2px #c3c3c3, 2px -2px black',
       },
       colors: {
