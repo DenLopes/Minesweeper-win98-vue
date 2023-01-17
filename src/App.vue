@@ -36,9 +36,7 @@ function numberToArray(number) {
 function createDisplayUrlArray(number ,array, sarray) {
 	array = numberToArray(number)
 	if(array.length > 3){
-		for(let i = 0;i < array.length; i++){
-			srray[i] = new URL (`../src/assets/img/9-info.png`, import.meta.url)
-		}
+		return
 	}else{
 		for(let i = 0;i < array.length; i++){
 			switch(array[i]){
@@ -223,7 +221,7 @@ onMounted(() => {
 					v-show="active" 
 					class="absolute top-[21px] left-0.5">
 					</Menu>
-					<button class="text-xs font-retro first-letter:underline px-1.5">Help</button>
+					<button class="text-xs font-retro first-letter:underline ml-0.5 px-1.5 mt-0.5">Help</button>
 				</div>
 				<div id="game-window" class="flex flex-col w-fit h-fit self-center">
 					<div id="top" class="flex w-full h-[3px] bg-white justify-end">
