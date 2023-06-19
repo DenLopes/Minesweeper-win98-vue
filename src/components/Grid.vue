@@ -1,6 +1,6 @@
 <script setup>
 import Tile from "../components/Tile.vue";
-import { onMounted, reactive } from "vue";
+import { onMounted, ref } from "vue";
 
 const props = defineProps({
     bombs: Number,
@@ -15,39 +15,28 @@ const row = props.row
 const bombs = props.bombs
 let game_stop = false
 let bomb_count = bombs
-const grid = []
-let sgrid = reactive([])
+let grid = []
+const sgrid = ref([])
 
-function getRandomInt(max) {
+const getRandomInt = (max) => {
     return Math.floor(Math.random() * max);
 }
 
-function  plantBomb() {
+const plantBomb = () => {
     const colb = getRandomInt(col+1)
     const rowb = getRandomInt(row+1)
-    if(grid[colb][rowb] === 'b'){
-        plantBomb()
-    }else{
-        grid[colb][rowb] = 'b'
-    }
+    grid[colb][rowb] === 'b' ? plantBomb() : grid[colb][rowb] = 'b'
 }
 
-function spreadBomb() {
-    for(let i = 1;i <= bombs; i++){
-        plantBomb()
-    }
+const spreadBomb = () => {
+    Array.from({length: bombs}, () => plantBomb())
 }
 
-function createGrid(array, value) {
-    for (let i = 0; i <= col; i++) {
-        array[i] = []
-        for (let j = 0; j <= row; j++) {
-            array[i][j] = value
-        }
-    }
+const createGridOf = (value) => {
+    return Array.from({length: col+1}, () => Array.from({length: row+1}, () => value))
 }
 
-function lookForBombs() {
+const lookForBombs = () => {
     let bomb = 0
     for (let i = 0; i <= col; i++) {
         for (let j = 0; j <= row; j++) {
@@ -58,7 +47,7 @@ function lookForBombs() {
             for(let k = -1; k <= 1; k++){
                 for(let y = -1; y <= 1; y++){
                     if(k === 0 && y === 0){
-                         continue;
+                        continue;
                     }
                     let x_pixel = i + k
                     let y_pixel = j + y
@@ -69,52 +58,51 @@ function lookForBombs() {
                     }
                 }
             }
-        grid[i][j] = bomb.toString()
+            grid[i][j] = bomb.toString()
         }
-        
     }
 }
 
-function gameRules(x, y) {
+const gameRules = (x, y) => {
     emit('play')
     if(game_stop === false){
         if(grid[x][y] === 'b'){
             for (let i = 0; i <= col; i++) {
                 for (let j = 0; j <= row; j++) {
-                    if(grid[i][j] === 'b' && sgrid[i][j] === 'n'){
-                        sgrid[i][j] = 'b'
-                    }else if(grid[i][j] !== 'b' && sgrid[i][j] === 'f'){
-                        sgrid[i][j] = 'x'
+                    if(grid[i][j] === 'b' && sgrid.value[i][j] === 'n'){
+                        sgrid.value[i][j] = 'b'
+                    }else if(grid[i][j] !== 'b' && sgrid.value[i][j] === 'f'){
+                        sgrid.value[i][j] = 'x'
                     }
                 }
             }
-            sgrid[x][y] = 'bh'
+            sgrid.value[x][y] = 'bh'
             emit('lose')
             emit('pause')
             game_stop = true
             return
-        }else if(grid[x][y] === '0' && sgrid[x][y] !== 'f'){
-            sgrid[x][y] = grid[x][y]
+        }else if(grid[x][y] === '0' && sgrid.value[x][y] !== 'f'){
+            sgrid.value[x][y] = grid[x][y]
             floodfill(x, y)
-        }else if(sgrid[x][y] === 'f'){
+        }else if(sgrid.value[x][y] === 'f'){
             bomb_count++
             emit('unflaged')
-            sgrid[x][y] = grid[x][y]
+            sgrid.value[x][y] = grid[x][y]
             gameRules(x, y)
         }else{
-            sgrid[x][y] = grid[x][y]
+            sgrid.value[x][y] = grid[x][y]
         }
         checkIfWon()
     }
 }
 
-function floodfill(x, y) {
+const floodfill = (x, y) => {
     for(let k = -1; k <= 1; k++){
         for(let j = -1; j <= 1; j++){
             let x_pixel = x + k
             let y_pixel = y + j
             if(x_pixel > -1 && x_pixel <= col && y_pixel > -1 && y_pixel <= row){
-                if(grid[x_pixel][y_pixel] !== 'b' && sgrid[x_pixel][y_pixel] === 'n'){
+                if(grid[x_pixel][y_pixel] !== 'b' && sgrid.value[x_pixel][y_pixel] === 'n'){
                     gameRules(x_pixel, y_pixel)
                 }
             }
@@ -122,24 +110,24 @@ function floodfill(x, y) {
     }
 }
 
-function flag(x ,y) {
+const flag = (x ,y) => {
     emit('play')
-    if(sgrid[x][y] === 'n' && !game_stop && bomb_count > 0){
+    if(sgrid.value[x][y] === 'n' && !game_stop && bomb_count > 0){
         bomb_count--
-        sgrid[x][y] = 'f'
+        sgrid.value[x][y] = 'f'
         emit('flaged')
-    }else if(sgrid[x][y] === 'f' && !game_stop){
+    }else if(sgrid.value[x][y] === 'f' && !game_stop){
         bomb_count++
-        sgrid[x][y] = 'n'
+        sgrid.value[x][y] = 'n'
         emit('unflaged')
     }
 }
 
-function checkIfWon() {
+const checkIfWon = () => {
     let aux = 0
     for (let i = 0; i <= col; i++) {
         for (let j = 0; j <= row; j++) {
-            if(sgrid[i][j] === 'n' || sgrid[i][j] === 'f'){
+            if(sgrid.value[i][j] === 'n' || sgrid.value[i][j] === 'f'){
                 aux++
             }
         }
@@ -150,19 +138,19 @@ function checkIfWon() {
         emit('pause')
         for (let i = 0; i <= col; i++) {
             for (let j = 0; j <= row; j++) {
-                if(sgrid[i][j] === 'n' && grid[i][j] === 'b'){
-                    sgrid[i][j] = 'f'
+                if(sgrid.value[i][j] === 'n' && grid[i][j] === 'b'){
+                    sgrid.value[i][j] = 'f'
                 }
             }
         }
     }
 }
 
-function gameInit() {
+const gameInit = () => {
     game_stop = false
     bomb_count = bombs
-    createGrid(sgrid, 'n')
-    createGrid(grid, '0')
+    sgrid.value = createGridOf('n')
+    grid = createGridOf('0')
     spreadBomb()
     lookForBombs()
 }
@@ -174,7 +162,6 @@ defineExpose({
 onMounted(() => {
     gameInit()
 })
-
 </script>
 
 <template> 
@@ -189,6 +176,6 @@ onMounted(() => {
 
 <style scoped>
 img {
-  image-rendering: pixelated;
+    image-rendering: pixelated;
 }
 </style>
